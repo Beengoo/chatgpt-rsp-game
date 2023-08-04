@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Легендарна Королівська Битва</title>
+    <style>
+        #game {
+            position: relative;
+            width: 1000px;
+            height: 1000px;
+            border: 1px solid black;
+			background-color: #4f4b4b;
+        }
+        .game-object {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+        }
+		.author_titles{
+			color: white;
+		}
+		.author_titles a{
+			color: green;
+		}
+    </style>
+</head>
+<body style="background-color: #333030; font-family: 'Arial'">
+	<center>
+	<div id="counters" style="background-color: green; display: inline-block; padding: 5px; border-radius: 10px;">
+        🗿: <span id="rock">0</span>
+        📄: <span id="paper">0</span>
+        ✂️: <span id="scissors">0</span>
+		💢: <span id="battles">0</span>
+    </div>
+	<br>
+	<div id="game">
+        <!-- Тут будуть додаватись об'єкти гри -->
+    </div>
+	<p class="author_titles">Ця гра була створена за допомогою <a href="https://chat.openai.com/share/23d5a859-45f2-4b6a-a9d8-09cadf7cddb8" target="blank_">ChatGPT 3.5</a>, та модернізована <a href="https://github.com/Beengoo" target="blank_">Beengoo</a></p>
+	</center>
+
+    <script>
+        const types = ["🗿", "✂️", "📄"];
+        const gameObjects = [];
+        const speeds = [];
+        const directions = [];
+		
+		let battles = 0;
+
+        for(let i = 0; i < 150; i++) {
+            let type = types[i % 3];
+            let gameObject = document.createElement('div');
+            gameObject.className = 'game-object';
+            gameObject.textContent = type;
+            gameObject.style.left = `${Math.random() * 980}px`;
+            gameObject.style.top = `${Math.random() * 980}px`;
+            gameObjects.push(gameObject);
+            speeds.push(Math.random() * 3 + 1);
+            directions.push(Math.random() * 2 * Math.PI);
+            document.getElementById('game').appendChild(gameObject);
+        }
+
+        function moveObjects() {
+            for(let i = 0; i < gameObjects.length; i++) {
+                let x = parseFloat(gameObjects[i].style.left);
+                let y = parseFloat(gameObjects[i].style.top);
+                let dx = Math.cos(directions[i]) * speeds[i];
+                let dy = Math.sin(directions[i]) * speeds[i];
+                
+                if (x + dx < 0 || x + dx > 980) {
+                    directions[i] = Math.PI - directions[i];
+                } else {
+                    gameObjects[i].style.left = x + dx + 'px';
+                }
+
+                if (y + dy < 0 || y + dy > 980) {
+                    directions[i] = -directions[i];
+                } else {
+                    gameObjects[i].style.top = y + dy + 'px';
+                }
+            }
+
+            let rockCount = 0;
+            let paperCount = 0;
+            let scissorsCount = 0;
+
+            for(let i = 0; i < gameObjects.length; i++) {
+                for(let j = i+1; j < gameObjects.length; j++) {
+                    let dx = parseFloat(gameObjects[i].style.left) - parseFloat(gameObjects[j].style.left);
+                    let dy = parseFloat(gameObjects[i].style.top) - parseFloat(gameObjects[j].style.top);
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 20) { // Перевірка на колізію. 20 - це припустима відстань.
+                        let type1 = gameObjects[i].textContent;
+                        let type2 = gameObjects[j].textContent;
+						var audio = new Audio("ring.mp3")
+                        if (type1 == "🗿" && type2 == "✂️" || type1 == "✂️" && type2 == "🗿") {
+							audio.play()
+							battles++
+                            // Ножиці стають каменем.
+                            gameObjects[i].textContent = gameObjects[j].textContent = "🗿";
+                        } else if (type1 == "🗿" && type2 == "📄" || type1 == "📄" && type2 == "🗿") {
+							audio.play()
+							battles++
+                            // Камінь стає папером.
+                            gameObjects[i].textContent = gameObjects[j].textContent = "📄";
+                        } else if (type1 == "📄" && type2 == "✂️" || type1 == "✂️" && type2 == "📄") {
+							audio.play()
+							battles++
+                            // Папір стає ножицями.
+                            gameObjects[i].textContent = gameObjects[j].textContent = "✂️";
+                        }
+                    }
+                }
+
+                switch(gameObjects[i].textContent) {
+                    case "🗿":
+                        rockCount++;
+                        break;
+                    case "📄":
+                        paperCount++;
+                        break;
+                    case "✂️":
+                        scissorsCount++;
+                        break;
+                }
+            }
+
+            document.getElementById('rock').textContent = rockCount;
+            document.getElementById('paper').textContent = paperCount;
+            document.getElementById('scissors').textContent = scissorsCount;
+			document.getElementById('battles').textContent = battles;
+        }
+
+        setInterval(moveObjects, 100);
+    </script>
+</body>
+</html>
