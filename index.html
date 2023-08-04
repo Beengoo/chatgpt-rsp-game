@@ -32,7 +32,7 @@
         ✂️: <span id="scissors">0</span>
 		💢: <span id="battles">0</span><br>
 		Статус: <span id="status">Бій триває...</span><br>
-		<button id="control" onclick="run_game()">Розпочати</button><button id="control" onclick="toggle_sounds()">Звук</button>
+		<button id="control" onclick="run_game()">Розпочати</button>
     </div>
 	<br>
 	<div id="game">
@@ -43,13 +43,7 @@
 
     <script>
 		let is_started = false
-		function toggle_sounds() {
-			if (localStorage.muteSounds) {
-				localStorage.muteSounds = false;
-			} else {
-				localStorage.muteSounds = true;
-			}
-		}
+		
 		function run_game() {
 			if (is_started == true) {
 				location.reload()
@@ -115,17 +109,17 @@
 							let type2 = gameObjects[j].textContent;
 							var audio = new Audio("ring.mp3")
 							if (type1 == "🗿" && type2 == "✂️" || type1 == "✂️" && type2 == "🗿") {
-								if (!localStorage.muteSounds && localStorage.muteSounds == false) {audio.play()}
+								audio.play()
 								battles++
 								// Ножиці стають каменем.
 								gameObjects[i].textContent = gameObjects[j].textContent = "🗿";
 							} else if (type1 == "🗿" && type2 == "📄" || type1 == "📄" && type2 == "🗿") {
-								if (!localStorage.muteSounds && localStorage.muteSounds == false) {audio.play()}
+								audio.play()
 								battles++
 								// Камінь стає папером.
 								gameObjects[i].textContent = gameObjects[j].textContent = "📄";
 							} else if (type1 == "📄" && type2 == "✂️" || type1 == "✂️" && type2 == "📄") {
-								if (!localStorage.muteSounds && localStorage.muteSounds == false) {audio.play()}
+								audio.play()
 								battles++
 								// Папір стає ножицями.
 								gameObjects[i].textContent = gameObjects[j].textContent = "✂️";
